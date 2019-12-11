@@ -84,6 +84,10 @@ ERG.PVSize = (5:1:10); % kWp
 ERG.C_var = (0.25:0.01:0.32);
 % Matrix Strombezugskosten Grundpreis
 ERG.C_fix = (5:1:12);
+% EEG Vergütungssätze
+ERG.C_EEG = [9.87 9.97 10.08 10.18 10.33 10.48 10.64 10.79 10.95...
+    11.11 11.23 11.35 11.47 11.59 11.71 11.83 11.95 12.08 12.20...
+    12.24 12.27 12.30] * 0.01;
 
 %% 3.2 Simulation without VPP
 %% 3.2.1 Variation des Hausverbrauchs, Batteriekapazitaet und PV-Generatorleistung
@@ -166,13 +170,87 @@ for idxi=1:length(ERG.C_fix)
     ERG.C_Consumption(:,:,:,:,idxi) = C_Consumption_var(:,:,:,:) + 12 * ERG.C_fix(idxi);
 end
 
-clear idxi C_Consumption_var C_var
+% Ergebnismatrix Gesamtkosten
+ERG.C_FeedIn = zeros(length(ERG.PVSize), length(ERG.BatCap), length(ERG.Load), length(ERG.C_EEG));
 
-%% 3.2 VPP active
+% EEG FeedIn compensation
+C_EEG = reshape(ERG.C_EEG,1,1,1,[]);
+
+ERG.C_FeedIn = ERG.E_PV_FeedIn .* C_EEG;
+
+clear idxi C_Consumption_var C_var C_EEG
+
+%% 3.3 Simulation with VPP
+%% 3.3.1 VPP active
 % first assumption: Zuschlag an 80% der Tage
 
-num_active = 0.4;
+num_active = 0.8;
 
 [LProf.vppactive, LProf.socactive] = active(num_active);
 
 clear num_active
+
+%% 3.3.2 Variation des Hausverbrauchs, Batteriekapazitaet und PV-Generatorleistung
+
+% Index der zur Ergebnisspeicherung erforderlich ist.
+ERG.E_G_Consumption = zeros(length(ERG.PVSize), length(ERG.BatCap), length(ERG.Load));
+ERG.E_PV_FeedIn = zeros(length(ERG.PVSize), length(ERG.BatCap), length(ERG.Load));
+
+% Laufvariable fuer die Batteriekapazitaet
+idk = 1;
+
+for H_Load = ERG.Load
+    % Laufvariable fuer den Hausverbrauch (Spaltennr. der Ergebnismatrix)
+    idj = 1;
+    % Hausverbrauch anpassen
+    H.EIst = H_Load; % kWh
+
+    for E_BAT = ERG.BatCap 
+        % Laufvariable fuer die PV-Generatorleistung (Zeilennr. der Ergebnismatrix)
+        idi = 1;
+        % Batteriekapazitaet anpassen
+        PV.E_BAT = E_BAT; % kWh
+
+        for P_PV = ERG.PVSize
+            % PV-Generatorleistung anpassen
+            PV.P_PV = P_PV; % kWp
+            % Ausgangsleistung des PV-Systems in W aus der spezifischen
+            % AC-Leistungsabgabe des PV-Systems und der nominalen PV-Generatorleistung
+            Ppvs = LProf.ppvs * PV.P_PV * 1000; % W
+            % Neue Lastspitze Hausverbrauch
+            PMax = H.PStartMax * H.EIst / H.EStart; % W
+            % Lastprofil bei Ist-Energieverbrauch
+            Pl = LProf.pl * PMax; % W
+
+            % Differenzleistung in W
+            Pd = Ppvs - Pl; % W
+
+            % Aufruf des Simulationsmodells
+            [Pbs] = bssim(PV, Pd);
+
+            % Netzleistung bestimmen
+            Pg = Ppvs - Pl - Pbs;
+
+            % Energiesummen
+            % Netzbezug in kWh
+            Eg2ac = sum(abs((min(0, Pg)))) / 60 / 1000;
+            % Netzeinspeisung in kWh
+            Eac2g = sum(max(0, Pg)) / 60 / 1000;
+            
+
+            % Ergebnisse in Matrix speichern
+            ERG.E_G_Consumption(idi, idj, idk) = Eg2ac;
+            
+            ERG.E_PV_FeedIn(idi, idj, idk) = Eac2g;
+            
+            % Laufvariable fuer die PV-Generatorleistung um eins erhoehen
+            idi = idi+1;
+        end
+        % Laufvariable fuer die Batteriekapazitaet um eins erhoehen
+        idj = idj+1;
+    end
+    % Laufvariable fuer den Hausverbrauch um eins erhoehen
+    idk = idk+1;
+end
+
+clear idk idj idi E_BAT H_Load P_PV Pbat Pbs Pd Pl PMax Ppvs Pg Eg2ac Eac2g
