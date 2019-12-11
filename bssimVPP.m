@@ -1,21 +1,33 @@
-function [Pbs] = bssim(s, Pd)
+function [Pbs] = bssimVPP(PV, VPP, LProf, Pd)
 
 %% 1 Uebergabe der Systemparameter
 
+rng default;
+
 % Nutzbare Speicherkapazität in kWh
-E_BAT = s.E_BAT; 
+E_BAT = PV.E_BAT; 
 % Simulationszeitschrittweite in h
-dt = s.dt; 
+dt = PV.dt; 
 % Nominale AC-Leistungsaufnahme des Batteriewechselrichters in kW
-P_AC2BAT_in = s.P_AC2BAT_in; 
+P_AC2BAT_in = PV.P_AC2BAT_in; 
 % Nominale AC-Leistungsabgabe des Batteriewechselrichters in kW
-P_BAT2AC_out = s.P_BAT2AC_out; 
+P_BAT2AC_out = PV.P_BAT2AC_out; 
 % Mittlerer Umwandlungswirkungsgrad des Batteriewechselrichters im Ladebetrieb 
-eta_ac2bat = s.eta_ac2bat;
+eta_ac2bat = PV.eta_ac2bat;
 % Mittlerer Umwandlungswirkungsgrad des Batteriewechselrichters im Entladebetrieb 
-eta_bat2ac = s.eta_bat2ac;
+eta_bat2ac = PV.eta_bat2ac;
 % Mittlerer Umwandlungswirkungsgrad des Batteriespeichers 
-eta_bat = s.eta_bat;
+eta_bat = PV.eta_bat;
+% VPP active
+vppactive = LProf.vppactive;
+% SOC boarders active
+socactive = LProf.socactive;
+% VPP power
+pvpp = LProf.pvpp;
+% PQ power
+P_PQ = VPP.P_pq;
+% VPP max power
+P_VPP = VPP.P_max_pos;
 
 %% 2 Vorinitialisierung der Variablen
 
@@ -25,55 +37,97 @@ Pbatin = zeros(size(Pd)); % Batterieladeleistung in W
 Pbatout = zeros(size(Pd)); % Batterieentladeleistung in W
 Pbat = zeros(size(Pd)); % Batterieleistung in W
 Pbs = zeros(size(Pd)); % Batteriesystemleistung in W
-
+Pfcr = zeros(size(Pd)); % Regelleistung in W
 
 %% 3 Zeitschrittsimulation des Batteriesystems
 
-% Nur simulieren, wenn die Kapazitaet groesser null ist
-if E_BAT > 0
+% Erster und letzter Zeitschritt der Zeitschrittsimulation
+tstart = 2;
+tend = length(Pd);
 
-    % Erster und letzter Zeitschritt der Zeitschrittsimulation
-    tstart = 2;
-    tend = length(Pd);
+soc_vpp_on_max = 0.8;
+soc_vpp_on_min = 0.2;
 
-    % Beginn der Zeitschrittsimulation
-    for t = tstart:tend
+soc_vpp_off_max = 1;
+soc_vpp_off_min = 0;
 
-        if Pd(t) > 0 % Batterieladung, sofern die Differenzleistung groesser null ist.
-
-            % Batterieladeleistung auf nominale DC-Ladeleistung vom
-            % Batteriewechselrichter begrenzen
-            Pbatin(t) = min(Pd(t),P_AC2BAT_in*1000) * eta_ac2bat;
-
-            % Batterieladeleistung im aktuellen Zeitschritt ermitteln   
-            Pbatin(t) = min(Pbatin(t), E_BAT*1000 * (1-soc(t-1)) / dt / eta_bat);
-
-        elseif Pd(t) < 0 % Batterieentladung, sofern die Differenzleistung kleiner null ist.
-
-            % Batterieentladeleistung auf nominale DC-Entladeleistung vom
-            % Batteriewechselrichter begrenzen
-            Pbatout(t) = max(Pd(t), -P_BAT2AC_out * 1000) / eta_bat2ac;
-
-            % Batterieentladeleistung im aktuellen Zeitschritt ermitteln
-            Pbatout(t) = -min(-Pbatout(t), E_BAT * 1000 * soc(t-1) / dt);
-
+% Beginn der Zeitschrittsimulation
+for t = tstart:tend
+    
+    if socactive(t) == 1 % Ladestandsgrenzen aktiv
+        
+        if vppactive(t) == 1 % VPP aktiv
+            
+            if pvpp(t) ~= 0 % Frequenz außerhalb Totband
+                
+                rnd = rand();
+                
+                probability = abs(pvpp(t) * P_PQ / P_VPP);
+                
+                if rnd <= probability % VPP Leistungserbringung aktiv
+                    
+                    if pvpp(t) > 0
+                        
+                    else
+                        
+                    end
+                    
+                else
+                    
+                end
+                    
+                    
+                
+            elseif pvpp(t) < 0 % Frequenz unterhalb 49.99 Hz
+                
+            else % Frequenz innerhalb des Totbandes 
+                
+            end
+            
+        else
+            
         end
- 
-        % Batterieleistung bestimmen
-        Pbat(t) = Pbatin(t) + Pbatout(t);
-
-        % Batteriesystemleistung bestimmen
-        Pbs(t) = Pbatin(t) / eta_ac2bat + Pbatout(t) * eta_bat2ac;
-
-        % Anpassung des Energieinhalts des Batteriespeichers
-        Ebat(t) = Ebat(t-1) + (Pbatin(t) * eta_bat + Pbatout(t)) / 1000 * dt;
-
-        % Ladezustand berechnen
-        soc(t) = Ebat(t) / E_BAT;
-
+        
+    else
+        
     end
+    
 end
 
-% Netzleistung %Pg=Pd-Pbs;
-% Pg=Ppvs-Pl-Pbs;
-end
+%     if Pd(t) > 0 % Batterieladung, sofern die Differenzleistung groesser null ist.
+% 
+%         % Batterieladeleistung auf nominale DC-Ladeleistung vom
+%         % Batteriewechselrichter begrenzen
+%         Pbatin(t) = min(Pd(t),P_AC2BAT_in*1000) * eta_ac2bat;
+% 
+%         % Batterieladeleistung im aktuellen Zeitschritt ermitteln   
+%         Pbatin(t) = min(Pbatin(t), E_BAT*1000 * (1-soc(t-1)) / dt / eta_bat);
+% 
+%     elseif Pd(t) < 0 % Batterieentladung, sofern die Differenzleistung kleiner null ist.
+% 
+%         % Batterieentladeleistung auf nominale DC-Entladeleistung vom
+%         % Batteriewechselrichter begrenzen
+%         Pbatout(t) = max(Pd(t), -P_BAT2AC_out * 1000) / eta_bat2ac;
+% 
+%         % Batterieentladeleistung im aktuellen Zeitschritt ermitteln
+%         Pbatout(t) = -min(-Pbatout(t), E_BAT * 1000 * soc(t-1) / dt);
+% 
+%     end
+% 
+%     % Batterieleistung bestimmen
+%     Pbat(t) = Pbatin(t) + Pbatout(t);
+% 
+%     % Batteriesystemleistung bestimmen
+%     Pbs(t) = Pbatin(t) / eta_ac2bat + Pbatout(t) * eta_bat2ac;
+% 
+%     % Anpassung des Energieinhalts des Batteriespeichers
+%     Ebat(t) = Ebat(t-1) + (Pbatin(t) * eta_bat + Pbatout(t)) / 1000 * dt;
+% 
+%     % Ladezustand berechnen
+%     soc(t) = Ebat(t) / E_BAT;
+% 
+% end
+% 
+% % Netzleistung %Pg=Pd-Pbs;
+% % Pg=Ppvs-Pl-Pbs;
+% end

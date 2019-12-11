@@ -8,6 +8,9 @@ rng default;
 % Dayvector rndm
 active = rand(365,1);
 
+% erster Tag im Jahr --> nie Regelleistung
+active(1) = 1.1;
+
 % Dayvector logical 1 = VPP active
 active = active <= num_active;
 
