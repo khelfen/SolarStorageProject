@@ -46,7 +46,7 @@ if E_BAT > 0
             Pbatin(t) = min(Pd(t), P_AC2BAT_in * 1000) * eta_ac2bat;
 
             % Batterieladeleistung im aktuellen Zeitschritt ermitteln   
-            Pbatin(t) = min(Pbatin(t), E_BAT*1000 * (1-soc(t-1)) / dt / eta_bat);
+            Pbatin(t) = min(Pbatin(t), E_BAT * 1000 * (1-soc(t-1)) / dt / eta_bat);
 
         elseif Pd(t) < 0 % Batterieentladung, sofern die Differenzleistung kleiner null ist.
 

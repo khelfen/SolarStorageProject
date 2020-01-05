@@ -202,8 +202,13 @@ for H_Load = ERG.Load
             % Energiesummen
             % Netzbezug in kWh
             Eg2acVPP = sum(abs((min(0, PgVPP)))) / 60 / 1000;
+            % Netzbezug ohne FCR
+            %PgNoVPP = PgVPP + FCR.in
+            %Eg2acVPP
             % Netzeinspeisung in kWh
-            Eac2gVPP = sum(max(0, PgVPP)) / 60 / 1000;            
+            Eac2gVPP = sum(max(0, PgVPP)) / 60 / 1000;
+            
+            
 
             % Ergebnisse in Matrix speichern
             ERG.E_G_ConsumptionVPP(idi, idj, idk) = Eg2acVPP;
@@ -221,8 +226,8 @@ for H_Load = ERG.Load
 end
 
 clear t a b bat_active check pvpp_active socactive tend tstart VAll vppactive...
-    idk idj idi E_BAT H_Load P_PV Pbat Eg2acVPP Eac2gVPP Pbs PbsVPP Pl PMax...
-    Ppvs Pg Eg2ac Eac2g Pd PgVPP
+    idk idj idi E_BAT H_Load P_PV Pbat Eg2acVPP Eac2gVPP   Pl PMax...
+    Ppvs Pg Eg2ac Eac2g  PgVPP
 
 %% 3.2.2 Feed in tariffs and electricity costs
 
