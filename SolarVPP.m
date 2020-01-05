@@ -93,6 +93,7 @@ ERG.C_EEG = [9.87 9.97 10.08 10.18 10.33 10.48 10.64 10.79 10.95...
 num_active = 0.8;
 [LProf.vppactive, LProf.socactive] = active(num_active);
 clear num_active
+
 % SOC-Grenzen aktiv
 socactive = LProf.socactive;
 % Teilnahme am PRL-Markt im Zeitschritt
@@ -142,6 +143,8 @@ end
 % Index der zur Ergebnisspeicherung erforderlich ist.
 ERG.E_G_Consumption = zeros(length(ERG.PVSize), length(ERG.BatCap), length(ERG.Load));
 ERG.E_PV_FeedIn = zeros(length(ERG.PVSize), length(ERG.BatCap), length(ERG.Load));
+ERG.E_G_ConsumptionVPP = zeros(length(ERG.PVSize), length(ERG.BatCap), length(ERG.Load));
+ERG.E_PV_FeedInVPP = zeros(length(ERG.PVSize), length(ERG.BatCap), length(ERG.Load));
 
 % Laufvariable fuer die Batteriekapazitaet
 idk = 1;
@@ -190,6 +193,22 @@ for H_Load = ERG.Load
             ERG.E_PV_FeedIn(idi, idj, idk) = Eac2g;
             
 %% Simulation mit VPP
+
+            [PbsVPP, FCR] = bssimVPP(PV, LProf, BAT, Pd);
+            
+            % Netzleistung bestimmen
+            PgVPP = Ppvs - Pl - PbsVPP;
+
+            % Energiesummen
+            % Netzbezug in kWh
+            Eg2acVPP = sum(abs((min(0, PgVPP)))) / 60 / 1000;
+            % Netzeinspeisung in kWh
+            Eac2gVPP = sum(max(0, PgVPP)) / 60 / 1000;            
+
+            % Ergebnisse in Matrix speichern
+            ERG.E_G_ConsumptionVPP(idi, idj, idk) = Eg2acVPP;
+            
+            ERG.E_PV_FeedInVPP(idi, idj, idk) = Eac2gVPP;
                         
             % Laufvariable fuer die PV-Generatorleistung um eins erhoehen
             idi = idi+1;
@@ -202,7 +221,8 @@ for H_Load = ERG.Load
 end
 
 clear t a b bat_active check pvpp_active socactive tend tstart VAll vppactive...
-    idk idj idi E_BAT H_Load P_PV Pbat Pbs Pd Pl PMax Ppvs Pg Eg2ac Eac2g
+    idk idj idi E_BAT H_Load P_PV Pbat Eg2acVPP Eac2gVPP Pbs PbsVPP Pl PMax...
+    Ppvs Pg Eg2ac Eac2g Pd PgVPP
 
 %% 3.2.2 Feed in tariffs and electricity costs
 

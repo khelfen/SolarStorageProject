@@ -43,7 +43,7 @@ if E_BAT > 0
 
             % Batterieladeleistung auf nominale DC-Ladeleistung vom
             % Batteriewechselrichter begrenzen
-            Pbatin(t) = min(Pd(t),P_AC2BAT_in*1000) * eta_ac2bat;
+            Pbatin(t) = min(Pd(t), P_AC2BAT_in * 1000) * eta_ac2bat;
 
             % Batterieladeleistung im aktuellen Zeitschritt ermitteln   
             Pbatin(t) = min(Pbatin(t), E_BAT*1000 * (1-soc(t-1)) / dt / eta_bat);
