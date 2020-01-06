@@ -1,0 +1,23 @@
+Hello, bitte diese Energiesummen in der ERG Matrix ausgeben. 
+Die Benennung ist relativ egal, hauptsache ich kann es einigermaßen nachvollziehen :)
+
+
+% PV-Direktversorgung in kWh
+Epvs2l=sum(min(Ppvs,Pl))/60/1000;
+
+% AC-Energieaufnahme des Batteriesystems in kWh
+Eac2bs=sum(max(0,Pbs))/60/1000;
+
+% Netzeinspeisung in kWh
+Eac2g=sum(max(0,Pg))/60/1000;
+
+% AC-Energieabgabe des Batteriesystems in kWh
+Ebs2ac=sum(abs((min(0,Pbs))))/60/1000;
+
+% Netzbezug in kWh
+Eg2ac=sum(abs((min(0,Pg))))/60/1000;
+
+% VPP FCR+ in kWh
+
+
+% VPP FCR- in kWh
