@@ -1,51 +1,40 @@
 function [vppactive, socactive] = active(num_active)
-% Generation Random series zero or one with fixed probability
-% 1: VPP Active
-% 2: Optimisation own consumption
+% Generation zufälliger I/O-Vektoren zur Simulation eines Einsatzplans
+% eines virtuellen Kraftwerks
+    % socactive:
+        % 1: Maximale und Minimale SOC-Grenzen aktiv
+        % Annahme: 80% und 20%
+        % 0: SOC-Grenzen inaktiv
+    % vppactive:
+        % 1: Leistungserbringung durch das virtuelle Kraftwerk ist
+        % eingeschaltet
+        % 0: Eigenverbrauchsoptimierung
 
-rng default;
+rng default;                    % Random Seed standardisieren
 
-% Dayvector rndm
-active = rand(365,1);
+active = rand(365,1);           % Vektor der Tage des Jahres
+active(1) = 1.1;                % erster Tag im Jahr --> nie Regelleistung
 
-% erster Tag im Jahr --> nie Regelleistung
-active(1) = 1.1;
+active = active <= num_active;  % Zufällige Verteilung entscheided ob 1 oder 0
 
-% Dayvector logical 1 = VPP active
-active = active <= num_active;
+socactive = zeros(365*24*60,1); % Minutenvektoren SOC-aktiv
+vppactive = zeros(365*24*60,1); % Minutenvektoren VPP-aktiv
 
-% Minutes-Vector SOC and VPP active
-socactive = zeros(365*24*60,1); % Vector: 1 = SOC boarders active, 0 = no boarders
-vppactive = zeros(365*24*60,1); % Vector: 1 = frequency responce active, 0 = no FR active
+n = 1;                          % Startwert
 
-n = 1;
+num_soc_start = 12;             % Stunden vor Beginn der VPP Erbringung an denen SOC Grenzen aktiv sein sollen
+                                % Annahme: 12 Stunden
 
-% Stunden vor Beginn der VPP Erbringung an denen SOC Grenzen aktiv sein
-% sollen
-num_soc_start = 10;
+% Erstellung der Minutenvektoren aus dem Tagesvektor
 
 for i = 1:length(active)
-    
-    if n == 1 % Anfangswertproblem
-        
-        if active(i) == 0            
-            socactive(n:n+(24*60)-1) = 0;  
-            vppactive(n:n+(24*60)-1) = 0;
-        else
-            socactive(n:n+(24*60)-1) = 1;
-            vppactive(n:n+(24*60)-1) = 1;
-        end
-        
-    else % Sonst
-        
-        if active(i) == 0            
-            socactive(n:n+(24*60)-1) = 0;
-            vppactive(n:n+(24*60)-1) = 0;
-        else
-            socactive(n-(num_soc_start*60):n+(24*60)-1) = 1;
-            vppactive(n:n+(24*60)-1) = 1;
-        end
-        
+
+    if active(i) == 0            
+        socactive(n:n+(24*60)-1) = 0;
+        vppactive(n:n+(24*60)-1) = 0;
+    else
+        socactive(n-(num_soc_start*60):n+(24*60)-1) = 1;
+        vppactive(n:n+(24*60)-1) = 1;
     end
     
     n = n + 24*60; 
