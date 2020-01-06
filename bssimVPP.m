@@ -29,6 +29,7 @@ vppactive = BAT.vppactive;
 
 %% 2 Vorinitialisierung der Variablen
 
+i = 1;
 soc = zeros(size(Pd)); % Ladezustand
 Ebat = zeros(size(Pd)); % Energieinhalt des Batteriespeichers in kWh
 Pbatin = zeros(size(Pd)); % Batterieladeleistung in W
@@ -43,6 +44,7 @@ PbsVPPonly = zeros(size(Pd)); % Batteriesystemleistung nur FCR in W
 PbsTheo = zeros(size(Pd)); % Theoretische Batteriesystemleistung in W
 FCR.in = zeros(size(Pd)); % Negative Regelleistung in W
 FCR.out = zeros(size(Pd)); % Positive Regelleistung in W
+FCR.test = zeros(size(Pd));
 
 %% 3 Berechnung der Zeitschritte
 
@@ -53,7 +55,7 @@ for t = tstart:tend
     
 	if vppactive(t) == 0
 
-        if (Pd(t) > 0) && (soc(t) < soc_upper(t))   % Batterieladung, sofern die Differenzleistung groesser null ist.
+        if (Pd(t) > 0)   % Batterieladung, sofern die Differenzleistung groesser null ist.
 
             % Batterieladeleistung auf nominale DC-Ladeleistung vom
             % Batteriewechselrichter begrenzen
@@ -62,14 +64,14 @@ for t = tstart:tend
             % Batterieladeleistung im aktuellen Zeitschritt ermitteln   
             Pbatin(t) = min(Pbatin(t), E_BAT * 1000 * max(0, (soc_upper(t)-soc(t-1))) / dt / eta_bat);
 
-        elseif (Pd(t) < 0) && (soc(t) > soc_lower(t))   % Batterieentladung, sofern die Differenzleistung kleiner null ist.
-
+        elseif (Pd(t) < 0)   % Batterieentladung, sofern die Differenzleistung kleiner null ist.
+            
             % Batterieentladeleistung auf nominale DC-Entladeleistung vom
             % Batteriewechselrichter begrenzen
             Pbatout(t) = max(Pd(t), -P_BAT2AC_out * 1000) / eta_bat2ac;
 
             % Batterieentladeleistung im aktuellen Zeitschritt ermitteln
-            Pbatout(t) = max(-Pbatout(t), -E_BAT * 1000 * (soc(t-1) - soc_lower(t)) / dt);
+            Pbatout(t) = -min(-Pbatout(t), E_BAT * 1000 * max(0, soc(t-1) - soc_lower(t)) / dt);
 
         end
         
@@ -80,6 +82,7 @@ for t = tstart:tend
             PbatinVPP(t) = min(P_AC2BAT_in * 1000 * eta_ac2bat, E_BAT * 1000 * (1 - soc(t-1)) / dt / eta_bat);
             Pbatin(t) = PbatinVPP(t);
             
+            
         elseif pvpp(t) > 0 % Batterie entladen, wenn FCR positiv
             
             PbatoutVPP(t) = max(-P_BAT2AC_out * 1000 / eta_bat2ac, -E_BAT * 1000 * soc(t-1) / dt);
@@ -89,7 +92,7 @@ for t = tstart:tend
         
         % Vergleich mit AP ohne VPP, um FCR-Leistung zu berechnen
         
-        if (Pd(t) > 0) && (soc(t) < soc_upper(t))   % Batterieladung, sofern die Differenzleistung groesser null ist.
+        if (Pd(t) > 0)   % Batterieladung, sofern die Differenzleistung groesser null ist.
 
             % Batterieladeleistung auf nominale DC-Ladeleistung vom
             % Batteriewechselrichter begrenzen
@@ -98,14 +101,14 @@ for t = tstart:tend
             % Batterieladeleistung im aktuellen Zeitschritt ermitteln   
             PbatinTheo(t) = min(PbatinTheo(t), E_BAT * 1000 * max(0, (soc_upper(t)-soc(t-1))) / dt / eta_bat);
 
-        elseif (Pd(t) < 0) && (soc(t) > soc_lower(t))   % Batterieentladung, sofern die Differenzleistung kleiner null ist.
-
+        elseif (Pd(t) < 0) % Batterieentladung, sofern die Differenzleistung kleiner null ist.
+            
             % Batterieentladeleistung auf nominale DC-Entladeleistung vom
             % Batteriewechselrichter begrenzen
             PbatoutTheo(t) = max(Pd(t), -P_BAT2AC_out * 1000) / eta_bat2ac;
 
             % Batterieentladeleistung im aktuellen Zeitschritt ermitteln
-            PbatoutTheo(t) = max(-PbatoutTheo(t), -E_BAT * 1000 * (soc(t-1) - soc_lower(t)) / dt);
+            PbatoutTheo(t) = -min(-PbatoutTheo(t), E_BAT * 1000 * max(0, soc(t-1) - soc_lower(t)) / dt);
 
         end
         
@@ -131,11 +134,9 @@ for t = tstart:tend
 
 end
 
-FCR.PFCR = PbsVPPonly - PbsTheo ;
-
-FCR.PbatoutVPP = PbatoutVPP;
-
-FCR.PbatoutTheo = PbatoutTheo;
+% Lastgang der Regelleistungserbringung
+FCR.PFCR = PbsVPPonly - PbsTheo;
+% SOC der Batterie
 FCR.soc = soc;
 
 end
