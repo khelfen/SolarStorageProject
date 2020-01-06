@@ -39,6 +39,8 @@ PbatinTheo = zeros(size(Pd)); % Batterieladeleistung in W, wenn ohne VPP
 PbatoutTheo = zeros(size(Pd)); % Batterieladeleistung in W, wenn ohne VPP
 Pbat = zeros(size(Pd)); % Batterieleistung in W
 PbsVPP = zeros(size(Pd)); % Batteriesystemleistung in W
+PbsVPPonly = zeros(size(Pd)); % Batteriesystemleistung nur FCR in W
+PbsTheo = zeros(size(Pd)); % Theoretische Batteriesystemleistung in W
 FCR.in = zeros(size(Pd)); % Negative Regelleistung in W
 FCR.out = zeros(size(Pd)); % Positive Regelleistung in W
 
@@ -58,7 +60,7 @@ for t = tstart:tend
             Pbatin(t) = min(Pd(t), P_AC2BAT_in * 1000) * eta_ac2bat;
 
             % Batterieladeleistung im aktuellen Zeitschritt ermitteln   
-            Pbatin(t) = min(Pbatin(t), E_BAT * 1000 * (soc_upper(t)-soc(t-1)) / dt / eta_bat);
+            Pbatin(t) = min(Pbatin(t), E_BAT * 1000 * max(0, (soc_upper(t)-soc(t-1))) / dt / eta_bat);
 
         elseif (Pd(t) < 0) && (soc(t) > soc_lower(t))   % Batterieentladung, sofern die Differenzleistung kleiner null ist.
 
@@ -94,7 +96,7 @@ for t = tstart:tend
             PbatinTheo(t) = min(Pd(t), P_AC2BAT_in * 1000) * eta_ac2bat;
 
             % Batterieladeleistung im aktuellen Zeitschritt ermitteln   
-            PbatinTheo(t) = min(PbatinTheo(t), E_BAT * 1000 * (soc_upper(t)-soc(t-1)) / dt / eta_bat);
+            PbatinTheo(t) = min(PbatinTheo(t), E_BAT * 1000 * max(0, (soc_upper(t)-soc(t-1))) / dt / eta_bat);
 
         elseif (Pd(t) < 0) && (soc(t) > soc_lower(t))   % Batterieentladung, sofern die Differenzleistung kleiner null ist.
 
@@ -114,6 +116,12 @@ for t = tstart:tend
 
     % Batteriesystemleistung bestimmen
     PbsVPP(t) = Pbatin(t) / eta_ac2bat + Pbatout(t) * eta_bat2ac;
+    
+    % durch FCR ausgelöst
+    PbsVPPonly(t) = PbatinVPP(t) / eta_ac2bat + PbatoutVPP(t) * eta_bat2ac;
+    
+    % Theoretische Batteriesystemleistung bestimmen
+    PbsTheo(t) = PbatinTheo(t) / eta_ac2bat + PbatoutTheo(t) * eta_bat2ac;
 
     % Anpassung des Energieinhalts des Batteriespeichers
     Ebat(t) = Ebat(t-1) + (Pbatin(t) * eta_bat + Pbatout(t)) / 1000 * dt;
@@ -123,9 +131,12 @@ for t = tstart:tend
 
 end
 
-FCR.in = PbatinVPP - PbatinTheo;
+FCR.PFCR = PbsVPPonly - PbsTheo ;
 
-FCR.out = PbatoutVPP - PbatoutTheo;
+FCR.PbatoutVPP = PbatoutVPP;
+
+FCR.PbatoutTheo = PbatoutTheo;
+FCR.soc = soc;
 
 end
 
