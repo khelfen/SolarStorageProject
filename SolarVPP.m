@@ -153,6 +153,8 @@ ERG.E_G_Consumption = zeros(length(ERG.PVSize), length(ERG.BatCap), length(ERG.L
 ERG.E_PV_FeedIn = zeros(length(ERG.PVSize), length(ERG.BatCap), length(ERG.Load));          % Ergebnismatrix Eigenverbrauchsoptimierung PV-Netzeinspeisung in kWh
 ERG.E_G_ConsumptionVPP = zeros(length(ERG.PVSize), length(ERG.BatCap), length(ERG.Load));   % Ergebnismatrix mit FCR Netzbezug in kWh
 ERG.E_PV_FeedInVPP = zeros(length(ERG.PVSize), length(ERG.BatCap), length(ERG.Load));       % Ergebnismatrix mit FCR PV-Netzeinspeisung in kWh
+ERG.E_BAT_FeedIn = zeros(length(ERG.PVSize), length(ERG.BatCap), length(ERG.Load));         % Ergebnismatrix mit FCR BAT-Netzeinspeisung in kWh
+ERG.E_BAT_Consumption = zeros(length(ERG.PVSize), length(ERG.BatCap), length(ERG.Load));    % Ergebnismatrix mit FCR BAT-Netzbezug in kWh
 
 idk = 1;                                                    % Laufvariable fuer die Batteriekapazitaet
 
@@ -190,26 +192,37 @@ for H_Load = ERG.Load
             
 %% 3.2.2 Simulation mit VPP
 
-            [PbsVPP, FCR] = bssimVPP(PV, LProf, BAT, Pd);   % Simulation der FCR-optimierten Batteriesystemleistung in W
+            [PbsVPP, PbsNoVPP, FCR] = bssimVPP(PV, LProf, BAT, Pd);   % Simulation der FCR-optimierten Batteriesystemleistung in W
             
-            PgVPP = Ppvs - Pl - PbsVPP;                     % Netzleistung bestimmen
+            PgVPP = Ppvs - Pl - PbsVPP;                         % Netzleistung bestimmen, mit VPP in W
+            
+            PgNoVPP = Ppvs - Pl - PbsNoVPP;                     % Netzleistung bestimmen, Theo. ohne VPP in W
 
-            % Energiesummen berechnen
+            % Energiesummen berechnen:
             
-            %%%%%%%%%% Noch korrigieren! %%%%%%%%%
+            Eg2acVPP = sum(abs((min(0, PgVPP)))) / 60 / 1000;   % Netzbezug mit VPP Gesamt in kWh
             
-            Eg2acVPP = sum(abs((min(0, PgVPP)))) / 60 / 1000;   % Netzbezug in kWh
-            % Netzbezug ohne FCR
-            %PgNoVPP = PgVPP + FCR.in
-            %Eg2acVPP
+            Eg2acNoVPP = sum(abs((min(0, PgNoVPP)))) / 60 / 1000;   % Netzbezug ohne VPP Gesamt in kWh
             
-            Eac2gVPP = sum(max(0, PgVPP)) / 60 / 1000;          % Netzeinspeisung in kWh
+            Eg2acBat = Eg2acVPP - Eg2acNoVPP;                   % Netzbezug durch die FCR Erbringung der Batterie in kWh
+            
+            Eg2acl = Eg2acVPP - Eg2acBat;                       % Netzbezug durch den Hausverbrauch in kWh
+            
+            Eac2gVPP = sum(max(0, PgVPP)) / 60 / 1000;          % Netzeinspeisung mit VPP Gesamt in kWh
+            
+            Eac2gNoVPP = sum(max(0, PgNoVPP)) / 60 / 1000;      % Netzeinspeisung mit VPP Gesamt in kWh
+            
+            Eac2gBat = Eac2gVPP - Eac2gNoVPP;                   % Netzeinspeisung durch die FCR Erbringung der Batterie in kWh
+            
+            Eac2gPV = Eac2gVPP - Eac2gBat;                      % Netzeinspeisung der PV-Anlage in kWh
 
             % Ergebnisse in Matrix speichern:
             
-            ERG.E_G_ConsumptionVPP(idi, idj, idk) = Eg2acVPP;   % Netzbezug in kWh
-            ERG.E_PV_FeedInVPP(idi, idj, idk) = Eac2gVPP;       % Netzeinspeisung in kWh
-                        
+            ERG.E_G_ConsumptionVPP(idi, idj, idk) = Eg2acl;     % Netzbezug durch den Hausverbrauch in kWh
+            ERG.E_PV_FeedInVPP(idi, idj, idk) = Eac2gPV;        % Netzeinspeisung der PV-Anlage in kWh
+            ERG.E_BAT_FeedIn(idi, idj, idk) = Eac2gBat;         % Netzeinspeisung durch die FCR Erbringung der Batterie in kWh
+            ERG.E_BAT_Consumption(idi, idj, idk) = Eg2acBat;    % Netzbezug durch die FCR Erbringung der Batterie in kWh
+            
             idi = idi+1;                                        % Laufvariable fuer die PV-Generatorleistung um eins erhoehen
         end
         idj = idj+1;                                            % Laufvariable fuer die Batteriekapazitaet um eins erhoehen
@@ -217,7 +230,8 @@ for H_Load = ERG.Load
     idk = idk+1;                                                % Laufvariable fuer den Hausverbrauch um eins erhoehen
 end
 
-clear E_BAT Eac2g Eac2gVPP Eg2ac Eg2acVPP H_Load idi idj idk Pbs PbsVPP Pd Pg PgVPP Pl Ppvs P_PV PMax
+clear E_BAT Eac2g Eac2gBat Eac2gNoVPP Eac2gPV Eac2gVPP Eg2acBat Eg2acl Eg2acNoVPP...
+    Eg2acVPP Eg2ac H_Load idi idj idk Pbs PbsNoVPP PbsVPP Pd Pg PgNoVPP PgVPP Pl Ppvs P_PV PMax
 
 %% 3.2.3 EEG Vergütung und Stromkosten ohne VPP
 % Berechnung der Kosten
@@ -244,4 +258,6 @@ C_EEG = reshape(ERG.C_EEG,1,1,1,[]);                            % Vektor der EEG
 ERG.C_FeedIn = ERG.E_PV_FeedIn .* C_EEG;                        % Berechnung der EEG-Vergütung in €
 
 clear idxi C_Consumption_var C_var C_EEG
+
+%% 3.2.4 EEG Vergütung und Stromkosten mit VPP
 
