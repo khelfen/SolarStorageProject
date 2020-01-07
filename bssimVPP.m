@@ -26,12 +26,9 @@ PbatinVPP = zeros(size(Pd));        % Batterieladeleistung hervorgerufen durch V
 PbatoutVPP = zeros(size(Pd));       % Batterieentladeleistung hervorgerufen durch VPP in W
 PbatinTheo = zeros(size(Pd));       % Batterieladeleistung in W, wenn ohne VPP
 PbatoutTheo = zeros(size(Pd));      % Batterieladeleistung in W, wenn ohne VPP
-Pbat = zeros(size(Pd));             % Batterieleistung in W
 PbsVPP = zeros(size(Pd));           % Batteriesystemleistung in W
 PbsVPPonly = zeros(size(Pd));       % Batteriesystemleistung nur FCR in W
 PbsTheo = zeros(size(Pd));          % Theoretische Batteriesystemleistung in W
-FCR.in = zeros(size(Pd));           % Negative Regelleistung in W
-FCR.out = zeros(size(Pd));          % Positive Regelleistung in W
 
 %% 3 Berechnung der Zeitschritte
 
@@ -89,26 +86,28 @@ for t = tstart:tend
         
     end
 
-    Pbat(t) = Pbatin(t) + Pbatout(t);                                           % Batterieleistung bestimmen in W
-
-    PbsVPP(t) = Pbatin(t) / eta_ac2bat + Pbatout(t) * eta_bat2ac;               % Batteriesystemleistung bestimmen in W
-        
-    PbsVPPonly(t) = PbatinVPP(t) / eta_ac2bat + PbatoutVPP(t) * eta_bat2ac;     % durch FCR ausgelöst in W
-    
-    PbsTheo(t) = PbatinTheo(t) / eta_ac2bat + PbatoutTheo(t) * eta_bat2ac;      % Theoretische Batteriesystemleistung bestimmen in W
-
     Ebat(t) = Ebat(t-1) + (Pbatin(t) * eta_bat + Pbatout(t)) / 1000 * dt;       % Anpassung des Energieinhalts des Batteriespeichers in kWh
 
     soc(t) = Ebat(t) / E_BAT;                                                   % Ladezustand berechnen
 
 end
 
-PbsNoVPP = PbsVPP - PbsVPPonly + PbsTheo;
+PbsVPP = Pbatin / eta_ac2bat + Pbatout * eta_bat2ac;               % Batteriesystemleistung bestimmen in W
+
+PbsVPPonly = PbatinVPP / eta_ac2bat + PbatoutVPP * eta_bat2ac;     % Batterieleistung, nur durch FCR ausgelöst in W
+
+PbsTheo = PbatinTheo / eta_ac2bat + PbatoutTheo * eta_bat2ac;      % Theoretische Batteriesystemleistung bestimmen in W
+
+PbsNoVPP = PbsVPP - PbsVPPonly + PbsTheo;                          % Batterieleistung mit FCR in W
 
 FCR.Pbs = PbsVPP;                       % Batteriesystemleistung in W
 FCR.VPP = PbsVPPonly;                   % Batterieleistung durch FCR ausgel�st in W
 FCR.soc = soc;                          % SOC der Batterie
 FCR.PFCR = PbsVPPonly - PbsTheo;        % Lastgang der FCR in W
+
+% Batterievollzyklen berechnen
+
+FCR.VZ = sum(abs(diff(soc))) / 2;       % Anzahl der Vollzyklen ( 0% -> 100% -> 0%) in 1/a
 
 end
 

@@ -1,4 +1,4 @@
-function [Pbs] = bssim(s, Pd)
+function [Pbs, EV] = bssim(s, Pd)
 
 %% 1 Uebergabe der Systemparameter
 
@@ -43,14 +43,14 @@ for t = tstart:tend
 
     end
 
-    Pbat(t) = Pbatin(t) + Pbatout(t);                                           % Batterieleistung bestimmen
-
-    Pbs(t) = Pbatin(t) / eta_ac2bat + Pbatout(t) * eta_bat2ac;                  % Batteriesystemleistung bestimmen
-
     Ebat(t) = Ebat(t-1) + (Pbatin(t) * eta_bat + Pbatout(t)) / 1000 * dt;       % Anpassung des Energieinhalts des Batteriespeichers
 
     soc(t) = Ebat(t) / E_BAT;                                                   % Ladezustand berechnen
 
 end
+
+Pbs = Pbatin / eta_ac2bat + Pbatout * eta_bat2ac;                               % Batteriesystemleistung bestimmen
+
+EV.VZ = sum(abs(diff(soc))) / 2;                                                % Anzahl der Vollzyklen ( 0% -> 100% -> 0%) in 1/a
 
 end
