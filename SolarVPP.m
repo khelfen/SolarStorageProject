@@ -46,7 +46,7 @@ PV.P_AC2BAT_in = 3.3;   % Nominale AC-Leistungsaufnahme des Batteriewechselricht
 PV.P_BAT2AC_out = 3.3;  % Nominale AC-Leistungsabgabe des Batteriewechselrichters in kW
 PV.eta_ac2bat = 0.944;  % Mittlerer Umwandlungswirkungsgrad des Batteriewechselrichters im Ladebetrieb 
 PV.eta_bat2ac = 0.945;  % Mittlerer Umwandlungswirkungsgrad des Batteriewechselrichters im Entladebetrieb 
-PV.eta_bat = 0.93;      % Mittlerer Umwandlungswirkungsgrad des Batteriespeichers 
+PV.eta_bat = 0.938;     % Mittlerer Umwandlungswirkungsgrad des Batteriespeichers 
 PV.dt = 1/60;           % Simulationszeitschrittweite in h
 
 %% 2.2 H - Household
