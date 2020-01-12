@@ -78,7 +78,8 @@ ERG.BatCap = (8:2:16);                                  % Matrix Batteriekapazit
 ERG.PVSize = (5.5:0.5:10);                              % Matrix PV-Generatorleistung in kWp 
 ERG.C_var = (0.25:0.01:0.32);                           % Matrix Strombezugskosten Arbeitspreis in €/kWh
 ERG.C_fix = (5:1:12);                                   % Matrix Strombezugskosten Grundpreis in €/Monat
-ERG.C_Flat = [0.23 0.259];                           % Überziehungsstromkosten sonnenFlat in €/kWh
+ERG.C_Flat = [0.23 0.259];                              % Überziehungsstromkosten sonnenFlat in €/kWh
+ERG.sonnenBonus = 0.0025;                               % sonnenBonus in €/kWh
 
 % Quelle: https://www.bundesnetzagentur.de/DE/Sachgebiete/ElektrizitaetundGas/Unternehmen_Institutionen/
 % ErneuerbareEnergien/ZahlenDatenInformationen/EEG_Registerdaten/ArchivDatenMeldgn/ArchivDatenMeldgn_node.html
@@ -91,12 +92,12 @@ ERG.C_EEG = [9.87 9.97...                               % EEG Vergütungssätze in
 
 % Quelle: https://sonnen.de/haeufig-gestellte-fragen/
 
-ERG.C_AW = ERG.C_EEG + 0.0025;                          % EEG Vergütung + Bonus aus Direktvermarktung in €/kWh
+ERG.C_AW = ERG.C_EEG + ERG.sonnenBonus;                 % EEG Vergütung + Bonus aus Direktvermarktung in €/kWh
 
 % Zufällige Erstellung des Einsatzplans des virtuellen Kraftwerks
 
 num_active = 0.8;                                       % Annahme: FCR-Zuschlag an 80% der Tage
-[LProf.vppactive, LProf.socactive] = active(num_active);% Ermittlung der I/O-Vektoren Minutenvektoren
+[LProf.vppactive, LProf.socactive] = active(num_active);% Ermittlung der I/O-Minutenvektoren
 
 rng default;                                            % Random Seed standardisieren
 
@@ -106,9 +107,9 @@ pvpp_active = LProf.pvpp ~= 0;                          % Frequenzabweichung im 
 
 % Approximation, ob eigene Batterie aktiv ist pro Zeitschritt
 
-a = rand(length(pvpp_active),1);                        % Zufallsminutenvektor
+Pdif = rand(length(pvpp_active),1);                        % Zufallsminutenvektor
 b = abs(LProf.pvpp) * VPP.f_P_VPP_pos;                  % Prozentuale Anzahl der aktiven Batterien des virtuellen Kraftwerks
-bat_active = a <= b;                                    % Wahrscheinlichkeit das eigene Batterieaktiv ist
+bat_active = Pdif <= b;                                    % Wahrscheinlichkeit das eigene Batterieaktiv ist
 
 VAll = [vppactive, pvpp_active, bat_active];            % Einzelne I/O-Vektoren in Matirx speichern
 
@@ -159,6 +160,8 @@ ERG.E_BAT_Consumption = zeros(length(ERG.PVSize), length(ERG.BatCap), length(ERG
 ERG.VZ_FCR = zeros(length(ERG.PVSize), length(ERG.BatCap), length(ERG.Load));               % Ergebnismatrix FCR Vollzyklen in 1/a
 ERG.Tarif_FCR = zeros(length(ERG.PVSize), length(ERG.BatCap), length(ERG.Load));            % Berechnung des passenden Cloud-Tarifs in kWh
 ERG.Tarif_FCR = ERG.Tarif_FCR + 4250;                                                       % Standard == sonnenFlat 4250
+ERG.E_Bat_FCR_neg = zeros(length(ERG.PVSize), length(ERG.BatCap), length(ERG.Load));        % Ergebnismatrix der negativen Regelenergie
+ERG.E_Bat_FCR_pos = zeros(length(ERG.PVSize), length(ERG.BatCap), length(ERG.Load));        % Ergebnismatrix der positiven Regelenergie
 
 idk = 1;                                                    % Laufvariable fuer die Batteriekapazitaet
 
@@ -183,14 +186,14 @@ for H_Load = ERG.Load
 
             % Energiesummen berechnen:
             
-            Eg2ac = sum(abs((min(0, Pg)))) / 60 / 1000;     % Netzbezug in kWh
+            Eg2ac = sum(abs((min(0, Pg))));     % Netzbezug in kWh
             
-            Eac2g = sum(max(0, Pg)) / 60 / 1000;            % Netzeinspeisung in kWh
+            Eac2g = sum(max(0, Pg));            % Netzeinspeisung in kWh
 
             % Ergebnisse in Matrix speichern:
             
-            ERG.E_G_Consumption(idi, idj, idk) = Eg2ac;     % Netzbezug in kWh
-            ERG.E_PV_FeedIn(idi, idj, idk) = Eac2g;         % Netzeinspeisung in kWh
+            ERG.E_G_Consumption(idi, idj, idk) = Eg2ac;     % Netzbezug in Wmin
+            ERG.E_PV_FeedIn(idi, idj, idk) = Eac2g;         % Netzeinspeisung in Wmin
             ERG.VZ_EV(idi, idj, idk) = EV.VZ;               % Vollzyklen in 1/a
             
 %% 3.2.2 Simulation mit VPP
@@ -200,32 +203,36 @@ for H_Load = ERG.Load
             PgVPP = Ppvs - Pl - PbsVPP;                                 % Netzleistung bestimmen, mit VPP in W
             
             PgNoVPP = Ppvs - Pl - PbsNoVPP;                             % Netzleistung bestimmen, Theo. ohne VPP in W
+            
+            Pdif = PbsVPP - PbsNoVPP;
 
             % Energiesummen berechnen:
             
-            Eg2acVPP = sum(abs((min(0, PgVPP)))) / 60 / 1000;           % Netzbezug mit VPP Gesamt in kWh
+            Eg2acVPP = sum(abs((min(0, PgVPP))));                       % Netzbezug mit VPP Gesamt in Wmin
             
-            Eg2acNoVPP = sum(abs((min(0, PgNoVPP)))) / 60 / 1000;       % Netzbezug ohne VPP Gesamt in kWh
+            Eg2acNoVPP = sum(abs((min(0, PgNoVPP))));                   % Netzbezug ohne VPP Gesamt in Wmin
             
-            Eg2acBat = Eg2acVPP - Eg2acNoVPP;                           % Netzbezug durch die FCR Erbringung der Batterie in kWh
+            Eg2acBat = Eg2acVPP - Eg2acNoVPP;                           % Netzbezug durch die FCR Erbringung der Batterie in Wmin
             
-            Eg2acl = Eg2acVPP - Eg2acBat;                               % Netzbezug durch den Hausverbrauch in kWh
+            Eg2acl = Eg2acVPP - Eg2acBat;                               % Netzbezug durch den Hausverbrauch in Wmin
             
-            Eac2gVPP = sum(max(0, PgVPP)) / 60 / 1000;                  % Netzeinspeisung mit VPP Gesamt in kWh
+            Eac2gVPP = sum(max(0, PgVPP));                              % Netzeinspeisung mit VPP Gesamt in Wmin
             
-            Eac2gNoVPP = sum(max(0, PgNoVPP)) / 60 / 1000;              % Netzeinspeisung ohne VPP Gesamt in kWh
+            Eac2gNoVPP = sum(max(0, PgNoVPP));                          % Netzeinspeisung ohne VPP Gesamt in Wmin
             
-            Eac2gBat = Eac2gVPP - Eac2gNoVPP;                           % Netzeinspeisung durch die FCR Erbringung der Batterie in kWh
+            Eac2gBat = Eac2gVPP - Eac2gNoVPP;                           % Netzeinspeisung durch die FCR Erbringung der Batterie in Wmin
             
-            Eac2gPV = Eac2gVPP - Eac2gBat;                              % Netzeinspeisung der PV-Anlage in kWh
+            Eac2gPV = Eac2gVPP - Eac2gBat;                              % Netzeinspeisung der PV-Anlage in Wmin
 
             % Ergebnisse in Matrix speichern:
             
-            ERG.E_G_ConsumptionVPP(idi, idj, idk) = Eg2acl;     % Netzbezug durch den Hausverbrauch in kWh
-            ERG.E_PV_FeedInVPP(idi, idj, idk) = Eac2gPV;        % Netzeinspeisung der PV-Anlage in kWh
-            ERG.E_BAT_FeedIn(idi, idj, idk) = Eac2gBat;         % Netzeinspeisung durch die FCR Erbringung der Batterie in kWh
-            ERG.E_BAT_Consumption(idi, idj, idk) = Eg2acBat;    % Netzbezug durch die FCR Erbringung der Batterie in kWh
+            ERG.E_G_ConsumptionVPP(idi, idj, idk) = Eg2acl;     % Netzbezug durch den Hausverbrauch in Wmin
+            ERG.E_PV_FeedInVPP(idi, idj, idk) = Eac2gPV;        % Netzeinspeisung der PV-Anlage in Wmin
+            ERG.E_BAT_FeedIn(idi, idj, idk) = Eac2gBat;         % Netzeinspeisung durch die FCR Erbringung der Batterie in Wmin
+            ERG.E_BAT_Consumption(idi, idj, idk) = Eg2acBat;    % Netzbezug durch die FCR Erbringung der Batterie in Wmin
             ERG.VZ_FCR(idi, idj, idk) = FCR.VZ;                 % Vollzyklen in 1/a
+            ERG.E_Bat_FCR_neg(idi, idj, idk) = sum(Pdif(Pdif>0));       % Negative Regelenergie in Wmin
+            ERG.E_Bat_FCR_pos(idi, idj, idk) = abs(sum(Pdif(Pdif<0)));  % Positive Regelenergie in Wmin
             
             % Vorbereitung für die Kostenrechnung des Cloud-Tarifes
             % Quelle: https://static1.squarespace.com/static/59af54ba15d5db05ecec047b/t/5ccbd6b41905f4aafa87d4a5/1556862685075/
@@ -265,7 +272,20 @@ for H_Load = ERG.Load
     idk = idk+1;                                                % Laufvariable fuer den Hausverbrauch um eins erhoehen
 end
 
-clear E_BAT Eac2g Eac2gBat Eac2gNoVPP Eac2gPV Eac2gVPP Eg2acBat Eg2acl Eg2acNoVPP...
+% Umrechnung in kWh
+
+f = 1 / 60 / 1000;
+
+ERG.E_G_Consumption = ERG.E_G_Consumption * f;                  % Netzbezug in kWh
+ERG.E_PV_FeedIn = ERG.E_PV_FeedIn * f;                          % Netzeinspeisung in kWh
+ERG.E_G_ConsumptionVPP = ERG.E_G_ConsumptionVPP * f;            % Netzbezug durch den Hausverbrauch in kWh
+ERG.E_PV_FeedInVPP = ERG.E_PV_FeedInVPP * f;                    % Netzeinspeisung der PV-Anlage in kWh
+ERG.E_BAT_FeedIn = ERG.E_BAT_FeedIn * f;                        % Netzeinspeisung durch die FCR Erbringung der Batterie in kWh
+ERG.E_BAT_Consumption = ERG.E_BAT_Consumption * f;              % Netzbezug durch die FCR Erbringung der Batterie in kWh
+ERG.E_Bat_FCR_neg = ERG.E_Bat_FCR_neg * f;                      % Negative Regelenergie in kWh
+ERG.E_Bat_FCR_pos = ERG.E_Bat_FCR_pos * f;                      % Positive Regelenergie in kWh
+
+clear E_BAT Eac2g Eac2gBat Eac2gNoVPP Eac2gPV Eac2gVPP Eg2acBat Eg2acl Eg2acNoVPP f...
     Eg2acVPP Eg2ac H_Load idi idj idk Pbs PbsNoVPP PbsVPP Pd Pg PgNoVPP PgVPP Pl Ppvs P_PV PMax
 
 %% 3.2.3 EEG Vergütung und Stromkosten ohne VPP
