@@ -110,4 +110,3 @@ FCR.PFCR = PbsVPPonly - PbsTheo;        % Lastgang der FCR in W
 FCR.VZ = sum(abs(diff(soc))) / 2;       % Anzahl der Vollzyklen ( 0% -> 100% -> 0%) in 1/a
 
 end
-
