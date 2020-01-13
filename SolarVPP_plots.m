@@ -73,9 +73,9 @@ clear VPP.P_PQ
 
 % Eigene Annahmen:
 
-ERG.Load = (3000:500:10000);                            % Matrix Hausverbrauch in kWh
-ERG.BatCap = (8:2:16);                                  % Matrix Batteriekapazität in kWh
-ERG.PVSize = (5.5:0.5:10);                              % Matrix PV-Generatorleistung in kWp 
+ERG.Load = [10000 8000];                            % Matrix Hausverbrauch in kWh
+ERG.BatCap = [8 16];                                  % Matrix Batteriekapazität in kWh
+ERG.PVSize = [5.5 10];                              % Matrix PV-Generatorleistung in kWp 
 ERG.C_var = (0.25:0.01:0.32);                           % Matrix Strombezugskosten Arbeitspreis in €/kWh
 ERG.C_fix = (5:1:12);                                   % Matrix Strombezugskosten Grundpreis in €/Monat
 ERG.C_Flat = [0.23 0.259];                              % Überziehungsstromkosten sonnenFlat in €/kWh
@@ -96,7 +96,7 @@ ERG.C_AW = ERG.C_EEG + ERG.sonnenBonus;                 % EEG Vergütung + Bonus 
 
 % Zufällige Erstellung des Einsatzplans des virtuellen Kraftwerks
 
-num_active = 0.8;                                       % Annahme: FCR-Zuschlag an 80% der Tage
+num_active = 1;                                       % Annahme: FCR-Zuschlag an 80% der Tage
 [LProf.vppactive, LProf.socactive] = active(num_active);% Ermittlung der I/O-Minutenvektoren
 
 rng default;                                            % Random Seed standardisieren
@@ -139,8 +139,8 @@ for t = tstart:tend
                 BAT.vppactive(t) = 1;
                 
             otherwise
-                                                        % FCR off
-                continue
+                continue                                % FCR off
+                
         end
     end
 end
@@ -162,11 +162,14 @@ ERG.Tarif_FCR = zeros(length(ERG.PVSize), length(ERG.BatCap), length(ERG.Load));
 ERG.Tarif_FCR = ERG.Tarif_FCR + 4250;                                                       % Standard == sonnenFlat 4250
 ERG.E_Bat_FCR_neg = zeros(length(ERG.PVSize), length(ERG.BatCap), length(ERG.Load));        % Ergebnismatrix der negativen Regelenergie
 ERG.E_Bat_FCR_pos = zeros(length(ERG.PVSize), length(ERG.BatCap), length(ERG.Load));        % Ergebnismatrix der positiven Regelenergie
+a = size(LProf.socactive);
+SOC = zeros(a(1), length(ERG.PVSize), length(ERG.BatCap), length(ERG.Load));
+SOCVPP = zeros(a(1), length(ERG.PVSize), length(ERG.BatCap), length(ERG.Load));
 
 idk = 1;                                                    % Laufvariable fuer den Hausverbrauch
 
 for H_Load = ERG.Load
-    idj = 1;                                                % Laufvariable fuer die Batteriekapazitaet   
+    idj = 1;                                                % Laufvariable fuer die Batteriekapazitaet
     PMax = H.PStartMax * H_Load / H.EStart;                 % Neue Lastspitze Hausverbrauch in W
     Pl = LProf.pl * PMax;                                   % Lastgang des Hausverbrauchs in W
 
@@ -181,6 +184,8 @@ for H_Load = ERG.Load
             Pd = Ppvs - Pl;                                 % Differenzleistung in W
 
             [Pbs, EV] = bssim(PV, Pd);                      % Simulation der Eigenverbrauchsoptimierten Batteriesystemleistung in W
+            
+            SOC(:, idi, idj, idk) = EV.soc;
 
             Pg = Ppvs - Pl - Pbs;                           % Netzleistung in W
 
@@ -233,6 +238,7 @@ for H_Load = ERG.Load
             ERG.VZ_FCR(idi, idj, idk) = FCR.VZ;                 % Vollzyklen in 1/a
             ERG.E_Bat_FCR_neg(idi, idj, idk) = sum(Pdif(Pdif>0));       % Negative Regelenergie in Wmin
             ERG.E_Bat_FCR_pos(idi, idj, idk) = abs(sum(Pdif(Pdif<0)));  % Positive Regelenergie in Wmin
+            SOCVPP(:, idi, idj, idk) = FCR.soc;
             
             % Vorbereitung für die Kostenrechnung des Cloud-Tarifes
             % Quelle: https://static1.squarespace.com/static/59af54ba15d5db05ecec047b/t/5ccbd6b41905f4aafa87d4a5/1556862685075/

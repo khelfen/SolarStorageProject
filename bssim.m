@@ -52,5 +52,6 @@ end
 Pbs = Pbatin / eta_ac2bat + Pbatout * eta_bat2ac;                               % Batteriesystemleistung bestimmen
 
 EV.VZ = sum(abs(diff(soc))) / 2;                                                % Anzahl der Vollzyklen ( 0% -> 100% -> 0%) in 1/a
+EV.soc = soc;
 
 end
