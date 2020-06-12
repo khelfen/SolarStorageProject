@@ -1,0 +1,17 @@
+[0] Config.pm:304> INFO - This is Biber 2.14
+[1] Config.pm:307> INFO - Logfile is 'Dokumentation.blg'
+[286] biber-MSWIN64:322> INFO - === 
+[339] Biber.pm:415> INFO - Reading 'Dokumentation.bcf'
+[638] Biber.pm:943> INFO - Found 13 citekeys in bib section 0
+[688] Biber.pm:4256> INFO - Processing section 0
+[689] Utils.pm:75> INFO - Globbing data source 'Sources.bib'
+[713] Utils.pm:91> INFO - Globbed data source 'Sources.bib' to Sources.bib
+[757] Biber.pm:4455> INFO - Looking for bibtex format file 'Sources.bib' for section 0
+[765] bibtex.pm:1653> INFO - LaTeX decoding ...
+[831] bibtex.pm:1471> INFO - Found BibTeX data source 'Sources.bib'
+[1092] UCollate.pm:68> INFO - Overriding locale 'de-DE' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[1092] UCollate.pm:68> INFO - Overriding locale 'de-DE' defaults 'variable = shifted' with 'variable = non-ignorable'
+[1092] Biber.pm:4084> INFO - Sorting list 'anyt/global//global/global' of type 'entry' with template 'anyt' and locale 'de-DE'
+[1093] Biber.pm:4090> INFO - No sort tailoring available for locale 'de-DE'
+[1189] bbl.pm:652> INFO - Writing 'Dokumentation.bbl' with encoding 'UTF-8'
+[1202] bbl.pm:755> INFO - Output to Dokumentation.bbl

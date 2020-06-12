@@ -1,0 +1,428 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.1 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{anyt/global//global/global}
+    \entry{PyPan20}{online}{}
+      \name{author}{1}{}{%
+        {{hash=b9ac2437ba5ca8e31ef14dc21be6b425}{%
+           family={developers},
+           familyi={d\bibinitperiod},
+           given={Pandas},
+           giveni={P\bibinitperiod}}}%
+      }
+      \strng{namehash}{b9ac2437ba5ca8e31ef14dc21be6b425}
+      \strng{fullhash}{b9ac2437ba5ca8e31ef14dc21be6b425}
+      \strng{bibnamehash}{b9ac2437ba5ca8e31ef14dc21be6b425}
+      \strng{authorbibnamehash}{b9ac2437ba5ca8e31ef14dc21be6b425}
+      \strng{authornamehash}{b9ac2437ba5ca8e31ef14dc21be6b425}
+      \strng{authorfullhash}{b9ac2437ba5ca8e31ef14dc21be6b425}
+      \field{labelalpha}{dev20}
+      \field{sortinit}{d}
+      \field{sortinithash}{c438b3d5d027251ba63f5ed538d98af5}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{(Zugriff am 19.01.2020)}
+      \field{title}{Python Data Analysis Library}
+      \field{year}{2020}
+      \verb{urlraw}
+      \verb https://pandas.pydata.org/index.html
+      \endverb
+      \verb{url}
+      \verb https://pandas.pydata.org/index.html
+      \endverb
+    \endentry
+    \entry{PyGlob20}{online}{}
+      \name{author}{1}{}{%
+        {{hash=9688a568902e4b07b60557b566bdd820}{%
+           family={Foundation},
+           familyi={F\bibinitperiod},
+           given={Python\bibnamedelima Software},
+           giveni={P\bibinitperiod\bibinitdelim S\bibinitperiod}}}%
+      }
+      \strng{namehash}{9688a568902e4b07b60557b566bdd820}
+      \strng{fullhash}{9688a568902e4b07b60557b566bdd820}
+      \strng{bibnamehash}{9688a568902e4b07b60557b566bdd820}
+      \strng{authorbibnamehash}{9688a568902e4b07b60557b566bdd820}
+      \strng{authornamehash}{9688a568902e4b07b60557b566bdd820}
+      \strng{authorfullhash}{9688a568902e4b07b60557b566bdd820}
+      \field{labelalpha}{Fou20}
+      \field{sortinit}{F}
+      \field{sortinithash}{fb0c0faa89eb6abae8213bf60e6799ea}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{(Zugriff am 19.01.2020)}
+      \field{title}{glob - Unix style pathname pattern expansion}
+      \field{year}{2020}
+      \verb{urlraw}
+      \verb https://docs.python.org/3/library/glob.html
+      \endverb
+      \verb{url}
+      \verb https://docs.python.org/3/library/glob.html
+      \endverb
+    \endentry
+    \entry{flat20}{online}{}
+      \name{author}{1}{}{%
+        {{hash=32a678f307bfa60bae5c84ee86398693}{%
+           family={GmbH},
+           familyi={G\bibinitperiod},
+           prefix={sonnen},
+           prefixi={s\bibinitperiod}}}%
+      }
+      \strng{namehash}{32a678f307bfa60bae5c84ee86398693}
+      \strng{fullhash}{32a678f307bfa60bae5c84ee86398693}
+      \strng{bibnamehash}{32a678f307bfa60bae5c84ee86398693}
+      \strng{authorbibnamehash}{32a678f307bfa60bae5c84ee86398693}
+      \strng{authornamehash}{32a678f307bfa60bae5c84ee86398693}
+      \strng{authorfullhash}{32a678f307bfa60bae5c84ee86398693}
+      \field{extraname}{1}
+      \field{labelalpha}{Gmb}
+      \field{sortinit}{G}
+      \field{sortinithash}{62eb2aa29549e4fdbd3cb154ec5711cb}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{(Zugriff am 12.01.2020)}
+      \field{title}{Die Energieversorgungder Zukunft. Heute.}
+      \verb{urlraw}
+      \verb https://static1.squarespace.com/static/59af54ba15d5db05ecec047b/t/5ccbd6b41905f4aafa87d4a5/1556862685075/2.7+Kundenbrosch%C3%BCre+sonnen+GmbH+DE.pdf
+      \endverb
+      \verb{url}
+      \verb https://static1.squarespace.com/static/59af54ba15d5db05ecec047b/t/5ccbd6b41905f4aafa87d4a5/1556862685075/2.7+Kundenbrosch%C3%BCre+sonnen+GmbH+DE.pdf
+      \endverb
+    \endentry
+    \entry{sonnenBat18}{online}{}
+      \name{author}{1}{}{%
+        {{hash=32a678f307bfa60bae5c84ee86398693}{%
+           family={GmbH},
+           familyi={G\bibinitperiod},
+           prefix={sonnen},
+           prefixi={s\bibinitperiod}}}%
+      }
+      \strng{namehash}{32a678f307bfa60bae5c84ee86398693}
+      \strng{fullhash}{32a678f307bfa60bae5c84ee86398693}
+      \strng{bibnamehash}{32a678f307bfa60bae5c84ee86398693}
+      \strng{authorbibnamehash}{32a678f307bfa60bae5c84ee86398693}
+      \strng{authornamehash}{32a678f307bfa60bae5c84ee86398693}
+      \strng{authorfullhash}{32a678f307bfa60bae5c84ee86398693}
+      \field{extraname}{2}
+      \field{labelalpha}{Gmb18}
+      \field{sortinit}{G}
+      \field{sortinithash}{62eb2aa29549e4fdbd3cb154ec5711cb}
+      \field{extraalpha}{1}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{(Zugriff am 10.01.2020)}
+      \field{title}{Technische Daten sonnenBatterie eco 8.0}
+      \field{year}{2018}
+      \verb{urlraw}
+      \verb https://sonnenbatterie.de/sites/default/files/datenblatt_sonnenbatterie_eco_8.0_dach_1.pdf
+      \endverb
+      \verb{url}
+      \verb https://sonnenbatterie.de/sites/default/files/datenblatt_sonnenbatterie_eco_8.0_dach_1.pdf
+      \endverb
+    \endentry
+    \entry{tennet18}{online}{}
+      \name{author}{1}{}{%
+        {{hash=2ef0eb7c6f8e3d75a151d7a0fc43ae8f}{%
+           family={GmbH},
+           familyi={G\bibinitperiod},
+           given={TenneT\bibnamedelima TSO},
+           giveni={T\bibinitperiod\bibinitdelim T\bibinitperiod}}}%
+      }
+      \strng{namehash}{2ef0eb7c6f8e3d75a151d7a0fc43ae8f}
+      \strng{fullhash}{2ef0eb7c6f8e3d75a151d7a0fc43ae8f}
+      \strng{bibnamehash}{2ef0eb7c6f8e3d75a151d7a0fc43ae8f}
+      \strng{authorbibnamehash}{2ef0eb7c6f8e3d75a151d7a0fc43ae8f}
+      \strng{authornamehash}{2ef0eb7c6f8e3d75a151d7a0fc43ae8f}
+      \strng{authorfullhash}{2ef0eb7c6f8e3d75a151d7a0fc43ae8f}
+      \field{extraname}{1}
+      \field{labelalpha}{Gmb18}
+      \field{sortinit}{G}
+      \field{sortinithash}{62eb2aa29549e4fdbd3cb154ec5711cb}
+      \field{extraalpha}{2}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{(Zugriff am 07.01.2020)}
+      \field{title}{Haushalte ersetzen Kraftwerke - sonnen nimmt größte, virtuelle Batterie für das Stromnetz der Zukunft in Betrieb}
+      \field{year}{2018}
+      \verb{urlraw}
+      \verb https://www.tennet.eu/fileadmin/user_upload/Company/News/German/Hoerchens/2018/pressemitteilung_sonnen_Haushalte_ersetzen_Kraftwerke_-_sonnen_nimmt_gr%C3%B6%C3%9Fte__virtuelle_Batterie_f%C3%BCr_das_Stromnetz_der_Zukunft_in_Betrieb_Header_01.pdf
+      \endverb
+      \verb{url}
+      \verb https://www.tennet.eu/fileadmin/user_upload/Company/News/German/Hoerchens/2018/pressemitteilung_sonnen_Haushalte_ersetzen_Kraftwerke_-_sonnen_nimmt_gr%C3%B6%C3%9Fte__virtuelle_Batterie_f%C3%BCr_das_Stromnetz_der_Zukunft_in_Betrieb_Header_01.pdf
+      \endverb
+    \endentry
+    \entry{nextKW20}{online}{}
+      \name{author}{1}{}{%
+        {{hash=54e20cd505ea63ea88584ff9adf113bc}{%
+           family={GmbH},
+           familyi={G\bibinitperiod},
+           given={Next\bibnamedelima Kraftwerke},
+           giveni={N\bibinitperiod\bibinitdelim K\bibinitperiod}}}%
+      }
+      \strng{namehash}{54e20cd505ea63ea88584ff9adf113bc}
+      \strng{fullhash}{54e20cd505ea63ea88584ff9adf113bc}
+      \strng{bibnamehash}{54e20cd505ea63ea88584ff9adf113bc}
+      \strng{authorbibnamehash}{54e20cd505ea63ea88584ff9adf113bc}
+      \strng{authornamehash}{54e20cd505ea63ea88584ff9adf113bc}
+      \strng{authorfullhash}{54e20cd505ea63ea88584ff9adf113bc}
+      \field{extraname}{2}
+      \field{labelalpha}{Gmb20}
+      \field{sortinit}{G}
+      \field{sortinithash}{62eb2aa29549e4fdbd3cb154ec5711cb}
+      \field{extraalpha}{1}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{(Zugriff am 10.01.2020)}
+      \field{title}{Was ist Primärregelleistung (PRL)?}
+      \field{year}{2020}
+      \verb{urlraw}
+      \verb https://www.next-kraftwerke.de/wissen/primaerreserve-primaerregelleistung
+      \endverb
+      \verb{url}
+      \verb https://www.next-kraftwerke.de/wissen/primaerreserve-primaerregelleistung
+      \endverb
+    \endentry
+    \entry{sonnenBonus20}{online}{}
+      \name{author}{1}{}{%
+        {{hash=32a678f307bfa60bae5c84ee86398693}{%
+           family={GmbH},
+           familyi={G\bibinitperiod},
+           prefix={sonnen},
+           prefixi={s\bibinitperiod}}}%
+      }
+      \strng{namehash}{32a678f307bfa60bae5c84ee86398693}
+      \strng{fullhash}{32a678f307bfa60bae5c84ee86398693}
+      \strng{bibnamehash}{32a678f307bfa60bae5c84ee86398693}
+      \strng{authorbibnamehash}{32a678f307bfa60bae5c84ee86398693}
+      \strng{authornamehash}{32a678f307bfa60bae5c84ee86398693}
+      \strng{authorfullhash}{32a678f307bfa60bae5c84ee86398693}
+      \field{extraname}{3}
+      \field{labelalpha}{Gmb20}
+      \field{sortinit}{G}
+      \field{sortinithash}{62eb2aa29549e4fdbd3cb154ec5711cb}
+      \field{extraalpha}{2}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{(Zugriff am 12.01.2020)}
+      \field{title}{Häufig gestellte Fragen zur Direktvermarktung}
+      \field{year}{2020}
+      \verb{urlraw}
+      \verb https://sonnen.de/haeufig-gestellte-fragen/
+      \endverb
+      \verb{url}
+      \verb https://sonnen.de/haeufig-gestellte-fragen/
+      \endverb
+    \endentry
+    \entry{Jaschinsky18}{online}{}
+      \name{author}{1}{}{%
+        {{hash=39268cbcc7d398e69b89962ce60c38b9}{%
+           family={Jaschinsky},
+           familyi={J\bibinitperiod},
+           given={Dipl.-Ing.\bibnamedelimi (FH)\bibnamedelima Markus},
+           giveni={D\bibinithyphendelim I\bibinitperiod\bibinitdelim (\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+      }
+      \strng{namehash}{39268cbcc7d398e69b89962ce60c38b9}
+      \strng{fullhash}{39268cbcc7d398e69b89962ce60c38b9}
+      \strng{bibnamehash}{39268cbcc7d398e69b89962ce60c38b9}
+      \strng{authorbibnamehash}{39268cbcc7d398e69b89962ce60c38b9}
+      \strng{authornamehash}{39268cbcc7d398e69b89962ce60c38b9}
+      \strng{authorfullhash}{39268cbcc7d398e69b89962ce60c38b9}
+      \field{labelalpha}{Jas18}
+      \field{sortinit}{J}
+      \field{sortinithash}{c45040a764d616897e7f5b30174d7b92}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{(Zugriff am 30.11.2019)}
+      \field{title}{Informationswebseite von Herrn Dipl.-Ing. (FH) Markus Jaschinsky}
+      \field{year}{2018}
+      \verb{urlraw}
+      \verb https://www.netzfrequenz.info/
+      \endverb
+      \verb{url}
+      \verb https://www.netzfrequenz.info/
+      \endverb
+    \endentry
+    \entry{htwLast18}{online}{}
+      \name{author}{1}{}{%
+        {{hash=a1b9e56dbe8655e5781dc19aa558db52}{%
+           family={Technik\bibnamedelimb und\bibnamedelimb Wirtschaft\bibnamedelima Berlin},
+           familyi={T\bibinitperiod\bibinitdelim u\bibinitperiod\bibinitdelim W\bibinitperiod\bibinitdelim B\bibinitperiod},
+           given={Hochschule},
+           giveni={H\bibinitperiod},
+           prefix={für},
+           prefixi={f\bibinitperiod}}}%
+      }
+      \strng{namehash}{a1b9e56dbe8655e5781dc19aa558db52}
+      \strng{fullhash}{a1b9e56dbe8655e5781dc19aa558db52}
+      \strng{bibnamehash}{a1b9e56dbe8655e5781dc19aa558db52}
+      \strng{authorbibnamehash}{a1b9e56dbe8655e5781dc19aa558db52}
+      \strng{authornamehash}{a1b9e56dbe8655e5781dc19aa558db52}
+      \strng{authorfullhash}{a1b9e56dbe8655e5781dc19aa558db52}
+      \field{labelalpha}{Tec18}
+      \field{sortinit}{T}
+      \field{sortinithash}{51f9faf24c60c62ca764a77f78cf5666}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{(Zugriff am 10.01.2020)}
+      \field{title}{Lastprofile für Wohngebäude}
+      \field{year}{2018}
+      \verb{urlraw}
+      \verb https://fs-cloud.f1.htw-berlin.de/s/wZZQKdupnJd8wmH
+      \endverb
+      \verb{url}
+      \verb https://fs-cloud.f1.htw-berlin.de/s/wZZQKdupnJd8wmH
+      \endverb
+    \endentry
+    \entry{MatPol20}{online}{}
+      \name{author}{1}{}{%
+        {{hash=8687eae34a3830fc0c113d9d65382e90}{%
+           family={The\bibnamedelima MathWorks},
+           familyi={T\bibinitperiod\bibinitdelim M\bibinitperiod},
+           given={Inc.},
+           giveni={I\bibinitperiod}}}%
+      }
+      \strng{namehash}{8687eae34a3830fc0c113d9d65382e90}
+      \strng{fullhash}{8687eae34a3830fc0c113d9d65382e90}
+      \strng{bibnamehash}{8687eae34a3830fc0c113d9d65382e90}
+      \strng{authorbibnamehash}{8687eae34a3830fc0c113d9d65382e90}
+      \strng{authornamehash}{8687eae34a3830fc0c113d9d65382e90}
+      \strng{authorfullhash}{8687eae34a3830fc0c113d9d65382e90}
+      \field{extraname}{1}
+      \field{labelalpha}{The20}
+      \field{sortinit}{T}
+      \field{sortinithash}{51f9faf24c60c62ca764a77f78cf5666}
+      \field{extraalpha}{1}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{(Zugriff am 19.01.2020)}
+      \field{title}{polyval}
+      \field{year}{2020}
+      \verb{urlraw}
+      \verb https://de.mathworks.com/help/matlab/ref/polyval.html
+      \endverb
+      \verb{url}
+      \verb https://de.mathworks.com/help/matlab/ref/polyval.html
+      \endverb
+    \endentry
+    \entry{MatRe20}{online}{}
+      \name{author}{1}{}{%
+        {{hash=8687eae34a3830fc0c113d9d65382e90}{%
+           family={The\bibnamedelima MathWorks},
+           familyi={T\bibinitperiod\bibinitdelim M\bibinitperiod},
+           given={Inc.},
+           giveni={I\bibinitperiod}}}%
+      }
+      \strng{namehash}{8687eae34a3830fc0c113d9d65382e90}
+      \strng{fullhash}{8687eae34a3830fc0c113d9d65382e90}
+      \strng{bibnamehash}{8687eae34a3830fc0c113d9d65382e90}
+      \strng{authorbibnamehash}{8687eae34a3830fc0c113d9d65382e90}
+      \strng{authornamehash}{8687eae34a3830fc0c113d9d65382e90}
+      \strng{authorfullhash}{8687eae34a3830fc0c113d9d65382e90}
+      \field{extraname}{2}
+      \field{labelalpha}{The20}
+      \field{sortinit}{T}
+      \field{sortinithash}{51f9faf24c60c62ca764a77f78cf5666}
+      \field{extraalpha}{2}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{(Zugriff am 19.01.2020)}
+      \field{title}{reshape}
+      \field{year}{2020}
+      \verb{urlraw}
+      \verb https://de.mathworks.com/help/matlab/ref/reshape.html
+      \endverb
+      \verb{url}
+      \verb https://de.mathworks.com/help/matlab/ref/reshape.html
+      \endverb
+    \endentry
+    \entry{regel_PQ19}{misc}{}
+      \name{author}{1}{}{%
+        {{hash=20ceecfbf5afe41556313192bdec493f}{%
+           family={ÜNB},
+           familyi={Ü\bibinitperiod},
+           given={Deutsche},
+           giveni={D\bibinitperiod}}}%
+      }
+      \strng{namehash}{20ceecfbf5afe41556313192bdec493f}
+      \strng{fullhash}{20ceecfbf5afe41556313192bdec493f}
+      \strng{bibnamehash}{20ceecfbf5afe41556313192bdec493f}
+      \strng{authorbibnamehash}{20ceecfbf5afe41556313192bdec493f}
+      \strng{authornamehash}{20ceecfbf5afe41556313192bdec493f}
+      \strng{authorfullhash}{20ceecfbf5afe41556313192bdec493f}
+      \field{labelalpha}{ÜNB19}
+      \field{sortinit}{Ü}
+      \field{sortinithash}{77a6935510e008adcf5b555e7b4f0711}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{\url{https://www.regelleistung.net/ext/download/PQ_Bedingungen_FCR_aFRR_mFRR}}
+      \field{month}{05}
+      \field{note}{(Zugriff am 10.01.2020)}
+      \field{title}{Präqualifikationsverfahren für Regelreserveanbieter (Stand 23. Mai 2019)}
+      \field{year}{2019}
+    \endentry
+    \entry{htwInspek19}{online}{}
+      \name{author}{4}{}{%
+        {{hash=356f37ee50eecf2108f158b23d2232f7}{%
+           family={Weniger},
+           familyi={W\bibinitperiod},
+           given={Johannes},
+           giveni={J\bibinitperiod}}}%
+        {{hash=551229530c5a4c77ee0892fc5d876277}{%
+           family={Orth},
+           familyi={O\bibinitperiod},
+           given={Nico},
+           giveni={N\bibinitperiod}}}%
+        {{hash=b94f0c07a78f72bb9396aae14ce95c1a}{%
+           family={Böhme},
+           familyi={B\bibinitperiod},
+           given={Nico},
+           giveni={N\bibinitperiod}}}%
+        {{hash=f155053434770c7cda898feab9344615}{%
+           family={Quaschning},
+           familyi={Q\bibinitperiod},
+           given={Volker},
+           giveni={V\bibinitperiod}}}%
+      }
+      \strng{namehash}{7ea7a45f8fe2fad7cd5a44b994dd3ae0}
+      \strng{fullhash}{48edad0b5a143bec186b5af425d4f7f5}
+      \strng{bibnamehash}{7ea7a45f8fe2fad7cd5a44b994dd3ae0}
+      \strng{authorbibnamehash}{7ea7a45f8fe2fad7cd5a44b994dd3ae0}
+      \strng{authornamehash}{7ea7a45f8fe2fad7cd5a44b994dd3ae0}
+      \strng{authorfullhash}{48edad0b5a143bec186b5af425d4f7f5}
+      \field{labelalpha}{Wen+19}
+      \field{sortinit}{W}
+      \field{sortinithash}{1af34bd8c148ffb32de1494636b49713}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{06}
+      \field{note}{(Zugriff am 10.01.2020)}
+      \field{title}{Stromspeicher-Inspektion 2019}
+      \field{year}{2019}
+      \verb{urlraw}
+      \verb https://pvspeicher.htw-berlin.de/wp-content/uploads/Stromspeicher-Inspektion-2019.pdf
+      \endverb
+      \verb{url}
+      \verb https://pvspeicher.htw-berlin.de/wp-content/uploads/Stromspeicher-Inspektion-2019.pdf
+      \endverb
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+
